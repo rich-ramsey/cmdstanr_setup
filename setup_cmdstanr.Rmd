@@ -11,7 +11,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The aim is to capture how to setup cmdstanr to run with brms.
+The aim of this file is to capture how to setup cmdstanr to run with brms.
 
 The reason is that I arrived at ETHZ and R and R studio automatically updated via self-service and this caused problems for the toolchain and brms/stan. There appears to be an interaction between versions of R and R Studio and the operation of rstan. So much so that I am currently (as Ventura 13.3.1 (22E261) and the latest R Studio - 2023.03.1+446) not using rstan with brms (because it was problematic), but I am instead using cmdstanr with brms.
 
@@ -36,20 +36,20 @@ https://mc-stan.org/cmdstanr/articles/cmdstanr-internals.html
 
 use github remotes
 
-```{r}
+```{r, eval=FALSE}
 install.packages("remotes")
 remotes::install_github("stan-dev/cmdstanr")
 ```
 
 and also install brms, as we will also use that later on
 
-```{r}
+```{r, eval=FALSE}
 install.packages("brms")
 ```
 
 record the version in the renv lockfile
 
-```{r}
+```{r, eval=FALSE}
 renv::snapshot()
 ```
 
@@ -57,7 +57,7 @@ renv::snapshot()
 
 to install cmdstan, run this chunk.
 
-```{r}
+```{r, eval=FALSE}
 install_cmdstan(cores=4) ## cores just an example and without a folder location
 # specified it just uses the default folder location. The default is fine for most
 #  setups though.
@@ -69,7 +69,7 @@ install_cmdstan(cores=4) ## cores just an example and without a folder location
 
 then check the installation
 
-```{r}
+```{r, eval=FALSE}
 check_cmdstan_toolchain() 
 # if successful, it should read...
 # The C++ toolchain required for CmdStan is setup properly!
