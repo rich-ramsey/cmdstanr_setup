@@ -44,6 +44,47 @@ e.g.,
 # install.packages(c("brms", "here", "knitr", "tidyverse", "tidybayes", "bayesplot", "patchwork", "future")) # parallel comes pre-installed, hence it only needs loading in the next chunk and not installing.
 ```
 
+
+update as of Aug 25, 2023
+
+the above did not record cmdstanr in the renv.lock file or it did but it didn't know the repo / source.
+
+instead install as follows:
+
+use github remotes
+
+```{r}
+# install.packages("remotes")
+remotes::install_github("stan-dev/cmdstanr")
+```
+
+However, it still requires cmdstan to be available on the machine and that is NOT in the lock file which is kind of weird?? So you still need to unpack cmdstan in the right place manually. 
+
+only machines this has been:
+
+Macbook
+/Users/rramsey/.cmdstan/cmdstan-2.32.2
+
+or
+
+iMac
+/Users/Rich/.cmdstan/cmdstan-2.32.2
+
+And you download / install it as follows:
+
+the solution is here: https://discourse.mc-stan.org/t/how-to-install-cmdstanr-on-server-without-internet/26770
+
+- download from here: https://github.com/stan-dev/cmdstan/releases
+
+- and save in the equivalent location: /Users/Rich/.cmdstan/cmdstan-2.32.2
+
+- then run: cmdstanr::rebuild_cmdstan()
+
+
+
+
+
+
 2. load (like any other package)
 
 e.g.,
@@ -60,6 +101,13 @@ run this
 
 ```{r}
 install_cmdstan(cores=4) ## cores just an example
+
+# and to specifiy the folder location 
+install_cmdstan(cores=4,
+                dir = "/Users/Rich/.cmdstan")
+
+rebuild_cmdstan(cores=4,
+                dir = "/Users/Rich/.cmdstan")
 ```
 
 then check it
