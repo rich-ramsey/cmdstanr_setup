@@ -1,0 +1,5 @@
+The aim of this file is to capture how to setup cmdstanr to run with brms.
+
+The reason is that I arrived at ETHZ and R and R studio automatically updated via self-service and this caused problems for the toolchain and brms/stan. There appears to be an interaction between versions of R and R Studio and the operation of rstan. So much so that I am currently (as Ventura 13.3.1 (22E261) and the latest R Studio - 2023.03.1+446) not using rstan with brms (because it was problematic), but I am instead using cmdstanr with brms.
+
+AFAIK, however, using cmdstanr might be better than using rstan anyway (see links in section 1 below). Cmdstanr is lightweight and is kept up-to-date more frequently compared to rstan, which is released via CRAN. So using cmdstan and cmdstanr seems like the way to go forward in the future.
