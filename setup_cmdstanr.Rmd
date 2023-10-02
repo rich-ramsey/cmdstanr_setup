@@ -15,7 +15,9 @@ The aim is to capture how to setup cmdstanr to run with brms.
 
 The reason is that I arrived at ETHZ and R and R studio automatically updated via self-service and this caused problems for the toolchain and brms/stan. There appears to be an interaction between versions of R and R Studio and the operation of rstan. So much so that I am currently (as Ventura 13.3.1 (22E261) and the latest R Studio - 2023.03.1+446) not using rstan with brms (because it was problematic), but I am instead using cmdstanr with brms.
 
-The following is in two parts. 1) document the install process of cmdstanr. 2) document how to setup brms to use cmdstanr (instead of rstan)
+AFAIK, however, using cmdstanr might be better than using rstan anyway (see links in section 1 below). Cmdstanr is lightweight and is kept up-to-date more frequently compared to rstan, which is released via CRAN. So using cmdstan and cmdstanr seems like the way to go forward in the future.
+
+The following is in two parts. 1) document the install process of cmdstanr. 2) document how to setup brms to use cmdstanr (instead of rstan).
 
 ## 1) document the install process of cmdstanr ##
 
@@ -30,87 +32,42 @@ https://mc-stan.org/cmdstanr/articles/cmdstanr.html
 How does it work?
 https://mc-stan.org/cmdstanr/articles/cmdstanr-internals.html
 
-
-I think this is what I did:
-
-1. install
- we recommend running this is a fresh R session or restarting your current session
-install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-
-e.g., 
-
-```{r install-pkg}
-# install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-# install.packages(c("brms", "here", "knitr", "tidyverse", "tidybayes", "bayesplot", "patchwork", "future")) # parallel comes pre-installed, hence it only needs loading in the next chunk and not installing.
-```
-
-
-update as of Aug 25, 2023
-
-the above did not record cmdstanr in the renv.lock file or it did but it didn't know the repo / source.
-
-instead install as follows:
+## install cmdstanr (and brms) ##
 
 use github remotes
 
 ```{r}
-# install.packages("remotes")
+install.packages("remotes")
 remotes::install_github("stan-dev/cmdstanr")
 ```
 
-However, it still requires cmdstan to be available on the machine and that is NOT in the lock file which is kind of weird?? So you still need to unpack cmdstan in the right place manually. 
-
-only machines this has been:
-
-Macbook
-/Users/rramsey/.cmdstan/cmdstan-2.32.2
-
-or
-
-iMac
-/Users/Rich/.cmdstan/cmdstan-2.32.2
-
-And you download / install it as follows:
-
-the solution is here: https://discourse.mc-stan.org/t/how-to-install-cmdstanr-on-server-without-internet/26770
-
-- download from here: https://github.com/stan-dev/cmdstan/releases
-
-- and save in the equivalent location: /Users/Rich/.cmdstan/cmdstan-2.32.2
-
-- then run: cmdstanr::rebuild_cmdstan()
-
-
-
-
-
-
-2. load (like any other package)
-
-e.g.,
-
-```{r load-pkg}
-# pkg <- c("cmdstanr", "brms", "here", "knitr", "tidyverse", "tidybayes", "bayesplot", "patchwork", "future", "parallel")
-# 
-# lapply(pkg, library, character.only = TRUE)
-```
-
-3. CmdStanR requires a working installation of CmdStan
-
-run this
+and also install brms, as we will also use that later on
 
 ```{r}
-install_cmdstan(cores=4) ## cores just an example
-
-# and to specifiy the folder location 
-install_cmdstan(cores=4,
-                dir = "/Users/Rich/.cmdstan")
-
-rebuild_cmdstan(cores=4,
-                dir = "/Users/Rich/.cmdstan")
+install.packages("brms")
 ```
 
-then check it
+record the version in the renv lockfile
+
+```{r}
+renv::snapshot()
+```
+
+## CmdStanR requires a working installation of CmdStan on your local machine ##
+
+to install cmdstan, run this chunk.
+
+```{r}
+install_cmdstan(cores=4) ## cores just an example and without a folder location
+# specified it just uses the default folder location. The default is fine for most
+#  setups though.
+
+# and to specify the folder location, use the below...
+# install_cmdstan(cores=4,
+#                 dir = "/Users/Rich/.cmdstan")
+```
+
+then check the installation
 
 ```{r}
 check_cmdstan_toolchain() 
@@ -120,19 +77,33 @@ check_cmdstan_toolchain()
 
 Note - of course, you can check the toolchain whenever to make sure things are ok and if you suspect they may be already setup, then you can run a quick check.
 
-## 2) document how to setup brms to use cmdstanr (instead of rstan) ##
+## As an aside, you can also manually download cmdstan ##
 
-this is fairly straightforward (I think).
+This is a non-essential sidepoint, but worth knowing about.
 
-Once installed, load packages as usual. But remember to set options so that brms knows to use cmdstanr and not rstan because rstan is the default.
+In some situations, using the install_cmdstan() function might not be possible and
+in those situations you can just download cmdstan and place it on your machine. See here: https://discourse.mc-stan.org/t/how-to-install-cmdstanr-on-server-without-internet/26770
 
-e.g., 
+The steps are as follows:
+
+- download from here: https://github.com/stan-dev/cmdstan/releases
+
+- and save in the equivalent location: e.g., /Users/Rich/.cmdstan/cmdstan-2.32.2
+
+- then run: cmdstanr::rebuild_cmdstan()
+
+## load the package/s (like any other package) ##
+
+e.g.,
+
+```{r load-pkg}
+pkg <- c("cmdstanr", "brms")
+
+lapply(pkg, library, character.only = TRUE)
+```
+
+then modify settings in brms to use cmdstanr on the backend...
 
 ```{r}
-# load packages as usual, e.g.,
-# pkg <- c("cmdstanr", "brms")
-# lapply(pkg, library, character.only = TRUE)
-
-# then modify brms options to select cmdstanr
-# options(brms.backend = "cmdstanr")
+options(brms.backend = "cmdstanr")
 ```
